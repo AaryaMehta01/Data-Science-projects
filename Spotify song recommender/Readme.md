@@ -1,119 +1,136 @@
-# Spotify Song Recommender
+We developed a song recommendation system for the user with the data we received from our Spotify song dataset. Data set and other applications are given in the description. Have a nice day.
 
-A data science project that builds a music recommendation system using Spotify data and machine learning techniques to suggest songs based on user preferences and listening patterns.
+### import
+```Python
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import plotly.express as px
+import plotly.graph_objects as go
+import matplotlib.pyplot as plt
+import plotly
+from sklearn.preprocessing import StandardScaler
+from scipy.spatial import distance
+import copy
+import warnings
 
-## Project Overview
-
-This project implements a song recommendation system that analyzes music features and user listening patterns to provide personalized song suggestions. The system uses various machine learning algorithms to identify similarities between songs and recommend tracks that align with user preferences.
-
-## Features
-
-- **Content-based filtering**: Recommends songs based on audio features and characteristics
-- **Collaborative filtering**: Uses user listening patterns and preferences
-- **Genre analysis**: Incorporates genre information for improved recommendations
-- **Data visualization**: Provides insights into music patterns and recommendation performance
-
-## Requirements
-
-To run this project, you'll need the following Python packages:
-
+warnings.filterwarnings("ignore")
+plotly.offline.init_notebook_mode (connected = True)
 ```
-pandas
-numpy
-scikit-learn
-matplotlib
-seaborn
-jupyter
-spotipy (for Spotify API integration)
+## Having First Look At The Data
+```Python
+data.head()
 ```
+![image](https://user-images.githubusercontent.com/63750425/182090399-8e159e3d-3d1e-43ff-8245-c5b15ee6d7ab.png)
 
-Install the required packages using:
-```bash
-pip install pandas numpy scikit-learn matplotlib seaborn jupyter spotipy
+```Python
+cols=list(data.columns[11:])
+del cols[7]
+df=copy.deepcopy(data)
+df.drop(columns=cols,inplace=True)
+sns.set(style="ticks", context="talk")
+plt.style.use("dark_background")
+sns.pairplot(df,corner=True,hue='genre')
 ```
+![image](https://user-images.githubusercontent.com/63750425/182090600-c2f2a269-a620-4713-9e73-24de868673d1.png)
 
-## Datasets
-
-This project uses two main datasets:
-
-1. **genres_v2.csv**: Contains genre classifications and characteristics for different music styles
-2. **playlists.csv**: Contains playlist data with song features, user preferences, and listening patterns
-
-Both datasets should be placed in the same directory as the notebook for proper execution.
-
-## How to Run
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/amehta7850/Data-Science-projects.git
-   cd "Data-Science-projects/Spotify song recommender"
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-   (Or install packages individually as listed above)
-
-3. **Launch Jupyter Notebook**:
-   ```bash
-   jupyter notebook
-   ```
-
-4. **Open and run the notebook**:
-   - Navigate to the Spotify song recommender notebook
-   - Run all cells sequentially
-   - Follow the step-by-step analysis and model building process
-
-## Expected Outputs
-
-When you run the notebook, you can expect to see:
-
-- **Data Exploration**: Statistical summaries and visualizations of the music datasets
-- **Feature Analysis**: Correlation matrices and feature importance plots
-- **Model Performance**: Accuracy metrics, confusion matrices, and recommendation quality scores
-- **Recommendation Results**: Sample song recommendations with similarity scores
-- **Visualizations**: Charts showing genre distributions, audio feature patterns, and model comparisons
-
-## Project Structure
-
-```
-Spotify song recommender/
-├── notebook.ipynb          # Main analysis notebook
-├── genres_v2.csv          # Genre classification data
-├── playlists.csv          # Playlist and song features data
-├── Readme.md              # Project documentation
-└── requirements.txt       # Python dependencies (if available)
+```Python
+px.box(data_frame=data,y='duration_ms',color='genre')
 ```
 
-## Key Sections in the Notebook
+![image](https://user-images.githubusercontent.com/63750425/182090680-c7bfbc15-c9e6-452b-b1d1-238a0a8b99e1.png)
 
-1. **Data Loading and Preprocessing**: Import and clean the datasets
-2. **Exploratory Data Analysis**: Understand the data distribution and patterns
-3. **Feature Engineering**: Create new features for better recommendations
-4. **Model Development**: Build and train recommendation algorithms
-5. **Model Evaluation**: Test performance and validate recommendations
-6. **Results and Insights**: Analyze outcomes and provide conclusions
+```Python
+x=list(data.corr().columns)
+y=list(data.corr().index)
+values=np.array(data.corr().values)
+fig = go.Figure(data=go.Heatmap(
+    z=values,
+    x=x,
+    y=y,
+                   
+    
+                   hoverongaps = False))
+fig.show()
+```
 
-## Technologies Used
+![image](https://user-images.githubusercontent.com/63750425/182090778-fa40ff7b-3a02-4ad1-9285-1567701f17c1.png)
 
-- **Python**: Main programming language
-- **Pandas & NumPy**: Data manipulation and numerical computing
-- **Scikit-learn**: Machine learning algorithms and tools
-- **Matplotlib & Seaborn**: Data visualization
-- **Jupyter Notebook**: Interactive development environment
+## Let's Make A Recommendation System
 
-## Future Improvements
+```Python
+data=data.dropna(subset=['song_name'])
+```
 
-- Integration with real-time Spotify API for live recommendations
-- Implementation of deep learning models for enhanced accuracy
-- User interface development for better accessibility
-- A/B testing framework for recommendation validation
+## Creating a new dataframe with required features
 
-## Contributing
 
-Feel free to fork this repository and submit pull requests for any improvements or bug fixes. Please ensure your code follows the existing style and includes appropriate documentation.
 
-## License
 
-This project is open source and available under the MIT License.
+```Python
+# Making a weight matrix using euclidean distance
+def make_matrix(data,song,number):
+    df=pd.DataFrame()
+    data.drop_duplicates(inplace=True)
+    songs=data['song_name'].values
+#    best = difflib.get_close_matches(song,songs,1)[0]
+    best=find_word(song,songs)
+    print('The song closest to your search is :',best)
+    genre=data[data['song_name']==best]['genre'].values[0]
+    df=data[data['genre']==genre]
+    x=df[df['song_name']==best].drop(columns=['genre','song_name']).values
+    if len(x)>1:
+        x=x[1]
+    song_names=df['song_name'].values
+    df.drop(columns=['genre','song_name'],inplace=True)
+    df=df.fillna(df.mean())
+    p=[]
+    count=0
+    for i in df.values:
+        p.append([distance.euclidean(x,i),count])
+        count+=1
+    p.sort()
+    for i in range(1,number+1):
+        print(song_names[p[i][1]])
+ ```
+ 
+ ```Python
+a=input('Please enter The name of the song :')
+b=int(input('Please enter the number of recommendations you want: '))
+make_matrix(df,a,b)
+ ```
+ 
+ ![image](https://user-images.githubusercontent.com/63750425/182091192-e953dbb6-f896-4d93-bdf9-1e7ad7176115.png)
+ ```Python
+def make_matrix_correlation(data,song,number):
+    df=pd.DataFrame()
+    data.drop_duplicates(inplace=True)
+    songs=data['song_name'].values
+#    best = difflib.get_close_matches(song,songs,1)[0]
+    best=find_word(song,songs)
+    print('The song closest to your search is :',best)
+    genre=data[data['song_name']==best]['genre'].values[0]
+    df=data[data['genre']==genre]
+    x=df[df['song_name']==best].drop(columns=['genre','song_name']).values
+    if len(x)>1:
+        x=x[1]
+    song_names=df['song_name'].values
+    df.drop(columns=['genre','song_name'],inplace=True)
+    df=df.fillna(df.mean())
+    p=[]
+    count=0
+    for i in df.values:
+        p.append([distance.correlation(x,i),count])
+        count+=1
+    p.sort()
+    for i in range(1,number+1):
+        print(song_names[p[i][1]])
+  ```
+ ```Python
+e=input('Please enter The name of the song :')
+f=int(input('Please enter the number of recommendations you want: '))
+make_matrix_correlation(df,e,f)
+  ```
+  
+  ![image](https://user-images.githubusercontent.com/63750425/182091405-fb736d12-bf27-439a-a0a1-5b4276539b08.png)
+
