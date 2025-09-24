@@ -1,7 +1,7 @@
 # Data Science & Analytics Project Portfolio
 
 ## About Me & My Transition
-Hello! I'm Aman Mehta, an analytics professional with a strong foundation in data science.
+Hello! I'm Aarya Mehta, an analytics professional with a strong foundation in data science.
 
 After extensive experience in data science, I discovered my true passion—making data actionable to drive business results. This realization led me to specialize in analytics, where I blend technical rigor and business strategy for maximum impact.
 
