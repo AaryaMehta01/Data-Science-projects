@@ -13,7 +13,7 @@ After extensive experience in data science, I discovered my true passion—makin
 
 ## 🔄 Where to Find My Analytics Projects
 For advanced analytics (BI dashboards, reporting automation), see my business intelligence portfolio:
-[bi-projects](bi-projects)
+[[BI - projects](https://github.com/amehta7850/BI-projects)]
 
 ## Project Index
 | Project Name                | Description                                 | Key Skills/Tech                     | Folder Link                  |
@@ -40,13 +40,12 @@ install.packages(c('tidyverse', 'caret', 'recommenderlab', 'sf', 'leaflet'))
 **Explore Data**: All data files are included or linked. You may need to download from the original sources.
 
 ## Connect
-- [LinkedIn](LinkedIn)
-- [GitHub](GitHub)
+- [[LinkedIn](https://www.linkedin.com/in/aarya-mehta-4669181a5/)]
 
 ## Message for Recruiters/Hiring Managers
 This repository showcases my progression in analytics, business intelligence, and data science problem-solving (including R, Python, and BI tools).
 
-For more sophisticated dashboards and automation, visit my BI portfolio at [bi-projects](bi-projects).
+For more sophisticated dashboards and automation, visit my BI portfolio at [[BI - projects](https://github.com/amehta7850/BI-projects)]
 
 #
  Data-Science-projects
