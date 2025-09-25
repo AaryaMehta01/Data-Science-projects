@@ -1,6 +1,5 @@
-pip install streamlit pandas numpy matplotlib
-pip install --upgrade pip
-streamlit
-pandas
-numpy
-matplotlib
+streamlit==1.38.0
+pandas==2.2.2
+numpy==1.26.4
+altair==5.4.1
+scikit-learn==1.5.2
